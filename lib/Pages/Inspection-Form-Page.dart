@@ -89,13 +89,30 @@ class _InspectionformpageState extends State<Inspectionformpage> {
                   return;
                 }
 
+                final Map<String, Map<String, Cleanlinesmodel>> coachData = {};
+
+                final List<String> parametersList = [
+                  'Urine Check?',
+                  'Dustbin Check?',
+                  'Drinking Check?',
+                  'Mirror Check?',
+                ];
+
+                for (int i = 1; i <= 12; i++) {
+                  String coachId = 'C$i';
+                  coachData[coachId] = {};
+
+                  for (var param in parametersList) {
+                    coachData[coachId]![param] = Cleanlinesmodel(score: 0, remark: '');
+                  }
+                }
+
                 final Trainmodel trainmodel = Trainmodel(
                   stationName: stationNameController.text,
                   date: dateController.text,
-                  cleanlinesParameter: {
-                    '': Cleanlinesmodel(score: 0, remark: ''),
-                  },
+                  coachWiseCleanlinesParameter: coachData,
                 );
+
 
                 stationNameController.clear();
                 dateController.clear();

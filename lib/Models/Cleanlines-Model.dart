@@ -13,6 +13,8 @@ class Cleanlinesmodel{
   int score;
   String remark;
 
+
+
 }
 
 // String toiletCleaningWithJet;

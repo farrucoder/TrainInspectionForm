@@ -1,40 +1,30 @@
 import 'package:flutter/cupertino.dart';
-import 'package:trainformforinspection/Models/Cleanlines-Model.dart';
 import 'package:trainformforinspection/Models/Train-Model.dart';
+import 'package:trainformforinspection/Services/Hive-DataBase-Services.dart';
 
 class Inspectionformprovider extends ChangeNotifier {
-  final List<Trainmodel> _trainModel = [
 
-    Trainmodel(
-      stationName: 'Kanpure',
-      date: '20/09/2025',
-      cleanlinesParameter: {
-        'Urine Check': Cleanlinesmodel(score: 9, remark: ''),
-      },
-    ),
-    Trainmodel(
-      stationName: 'Kanpure',
-      date: '20/09/2025',
-      cleanlinesParameter: {
-        'Urine Check': Cleanlinesmodel(score: 9, remark: ''),
-      },
-    ),
-    Trainmodel(
-      stationName: 'Kanpure',
-      date: '20/09/2025',
-      cleanlinesParameter: {
-        'Urine Check': Cleanlinesmodel(score: 9, remark: ''),
-      },
-    ),
 
-  ];
+   List<Trainmodel> _trainModel = [ ];
 
   List<Trainmodel> get trainModel => _trainModel;
 
-  Future<void> addTrainCleanlinesData(Trainmodel cleanLinesTrainData) async {
-    _trainModel.add(cleanLinesTrainData);
+   Future<void> addDataToProvider(BuildContext ctx,Trainmodel data) async {
+
+     await HiveDataBaseServices.addDataToHive(data);
+
+     await getDataFromProvider();
+
+   }
+
+  Future<void> getDataFromProvider() async {
+
+    _trainModel.clear();
+
+    _trainModel = await HiveDataBaseServices.getDataFromHive();
 
     notifyListeners();
+
   }
 
 

@@ -3,8 +3,34 @@ import 'package:provider/provider.dart';
 import 'package:trainformforinspection/Pages/Inspection-Form-Page.dart';
 import 'package:trainformforinspection/Providers/Inspection-Form-Provider.dart';
 
-class Homepage extends StatelessWidget {
-  const Homepage({super.key});
+class Homepage extends StatefulWidget {
+   Homepage({super.key});
+
+  @override
+  State<Homepage> createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  final List<String> parametersList = [
+    'Urine Check?',
+    'Dustbin Check?',
+    'Drinking Check?',
+    'Mirror Check?',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    if(mounted) {
+      Future.microtask(() {
+        Provider
+            .of<Inspectionformprovider>(context, listen: false)
+            .getDataFromProvider();
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +39,7 @@ class Homepage extends StatelessWidget {
       listen: true,
     );
     final inspectionFormDataList = inspectionProvider.trainModel;
+
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -25,79 +52,142 @@ class Homepage extends StatelessWidget {
         label: Text('New Form'),
         icon: Icon(Icons.add),
       ),
-      appBar: AppBar(title: Center(child: Text('Inspection\'s List'))),
+      appBar: AppBar(
+        backgroundColor: Colors.green[300],
+        title: Center(child: Text("Inspection's List",style: TextStyle(color: Colors.white),)),
+      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         child: inspectionFormDataList.isEmpty
             ? Center(
-                child: Text(
-                  'You have not inspected yet!!!',
-                  style: TextStyle(fontSize: 20, color: Colors.grey),
-                ),
-              )
+          child: Text(
+            'You have not inspected yet!!!',
+            style: TextStyle(fontSize: 18, color: Colors.grey),
+          ),
+        )
             : ListView.builder(
-                itemCount: inspectionFormDataList.length,
-                itemBuilder: (context, i) {
-                  final inspectionData = inspectionFormDataList[i];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.black87),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Text(
-                              'Inspection Details',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+          itemCount: inspectionFormDataList.length,
+          itemBuilder: (context, index) {
+            final inspection = inspectionFormDataList[index];
 
-                          Divider(thickness: 1, endIndent: 15, indent: 15),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Text(
-                                'Train Name:',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: 5),
-                              Text(inspectionData.stationName),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Text(
-                                'Date of inspection:',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: 5),
-                              Text(inspectionData.date),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+            return Container(
+              margin: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black87),
+                borderRadius: BorderRadius.circular(12),
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      'Inspection Details',
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Divider(thickness: 1),
+                  Row(
+                    children: [
+                      Text(
+                        'Train Name: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(inspection.stationName),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Text(
+                        'Date of Inspection: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(inspection.date),
+                    ],
+                  ),
+                  SizedBox(height: 15),
+
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Parameters',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            SizedBox(height: 8),
+                            for (final param in parametersList)
+                              Padding(
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 12),
+                                child: Text(param),
+                              ),
+                          ],
+                        ),
+                      ),
+
+
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: List.generate(12, (coachIndex) {
+                              final coachKey = 'C${coachIndex + 1}';
+                              return Container(
+                                margin: EdgeInsets.only(right: 12),
+                                width: 100,
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      coachKey,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    for (final param in parametersList)
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            vertical: 4),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                'Score: ${inspection.coachWiseCleanlinesParameter[coachKey]?[param]?.score ?? '-'}'),
+                                            Text(
+                                              'Remark: ${inspection.coachWiseCleanlinesParameter[coachKey]?[param]?.remark ?? '-'}',
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600]),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

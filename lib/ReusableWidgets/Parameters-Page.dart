@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainformforinspection/Models/Cleanlines-Model.dart';
 import 'package:trainformforinspection/Models/Train-Model.dart';
 import 'package:trainformforinspection/Pages/Home-Page.dart';
-import 'package:trainformforinspection/ReusableWidgets/custom-Toast.dart';
+import 'package:trainformforinspection/Providers/Inspection-Form-Provider.dart';
 import 'package:trainformforinspection/ReusableWidgets/helperButton.dart';
 import 'package:trainformforinspection/ReusableWidgets/helperInputField.dart';
-import 'package:trainformforinspection/Utils/validationCheck.dart';
-
-import '../Providers/Inspection-Form-Provider.dart';
+import '../Pages/Preview-Page.dart';
+import 'custom-Toast.dart';
 
 class Parameterspage extends StatefulWidget {
   Parameterspage({
@@ -25,167 +23,281 @@ class Parameterspage extends StatefulWidget {
 }
 
 class _ParameterspageState extends State<Parameterspage> {
+  final List<TextEditingController?> remarkController = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+  ];
 
+  //final TextEditingController remarkController = TextEditingController();
 
-  final TextEditingController remarkController = TextEditingController();
+  List<int?> selectedScore = List.generate(4, (index) => null);
 
-  int? selectedScore;
+  final List<String> parametersList = [
+    'Urine Check?',
+    'Dustbin Check?',
+    'Drinking Check?',
+    'Mirror Check?',
+  ];
 
-  final List<String> parametersList = ['Urine Check', 'Dustbin Check', 'Drinking Check', 'Mirror Check',];
+  final List<String> coachList = List.generate(12, (index) => 'C${index + 1}');
+
+  List<bool> scoreNotSelected = List.generate(4, (index) => false);
+
+  bool validateCurrentPageInputs() {
+    for (int i = 0; i < parametersList.length; i++) {
+      if (selectedScore[i] == null) {
+        scoreNotSelected[i] = true;
+        return false;
+      } else {
+        scoreNotSelected[i] = false;
+      }
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
+    return PopScope(
+      canPop: widget.pageCount == 0 ? true : false,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.green[500],
+          title: Text(
+            'Coach Serial : C${widget.pageCount + 1}',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: parametersList.length,
+                  itemBuilder: (context, i) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                parametersList[i],
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
 
-    final inspectionProvider = Provider.of<Inspectionformprovider>(
-      context,
-      listen: false,
-    );
-
-    final currentPageDate = parametersList[widget.pageCount];
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 15),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Image.asset('lib/Assets/InspectionLogo.png', height: 200),
-            ),
-
-            SizedBox(height: 50),
-
-            Center(
-              child: Text(
-                '$currentPageDate?',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            SizedBox(height: 20),
+                            Text(
+                              'Select a score:',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: scoreNotSelected[i]
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Wrap(
+                              spacing: 5,
+                              children: List<Widget>.generate(10, (index) {
+                                final score = index + 1;
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Radio<int>(
+                                      value: score,
+                                      groupValue: selectedScore[i],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedScore[i] = value!;
+                                        });
+                                      },
+                                    ),
+                                    Text('$score'),
+                                  ],
+                                );
+                              }),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              'Enter a remark(Optional):',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            helperInputField('Remark', remarkController[i]!),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
 
-            SizedBox(height: 20),
-            Text(
-              'Enter a score:',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 5),
-            Wrap(
-              spacing: 5,
-              children: List<Widget>.generate(10, (index) {
-                final score = index + 1;
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
+              SizedBox(height: 20),
+              if (widget.pageCount != coachList.length - 1)
+                Row(
                   children: [
-                    Radio<int>(
-                      value: score,
-                      groupValue: selectedScore,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedScore = value!;
-                        });
-                      },
-                    ),
-                    Text('$score'),
-                  ],
-                );
-              }),
-            ),
-
-
-            SizedBox(height: 20),
-            Text(
-              'Enter a remark:',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 5), //currentPageDate['remark']
-            helperInputField('Remark', remarkController),
-
-            SizedBox(height: 20),
-            if (widget.pageCount != parametersList.length - 1)
-              Row(
-                children: [
-                  if (parametersList.length > 0)
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          if (widget.pageCount == 0) {
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text('Back'),
-                            );
-                          } else {
+                    if (widget.pageCount > 0)
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => Parameterspage(
                                   pageCount: widget.pageCount - 1,
-                                  trainCleanlinesData: widget.trainCleanlinesData,
+                                  trainCleanlinesData:
+                                      widget.trainCleanlinesData,
                                 ),
                               ),
                             );
-                          }
-                        },
-                        child: helperButton('Previous'),
+                          },
+                          child: helperButton('Previous'),
+                        ),
                       ),
-                    ),
 
-                  if (widget.pageCount < parametersList.length - 1)
+                    if (widget.pageCount < coachList.length - 1)
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            // bool isValid = validateCurrentPageInputs();
+                            //
+                            // if (!isValid) {
+                            //   setState(() {});
+                            //   customToast('Please fill all scores.');
+                            //   return;
+                            // }
+                            //
+                            // setClealinesDataCoachWise();
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Parameterspage(
+                                  pageCount: widget.pageCount + 1,
+                                  trainCleanlinesData:
+                                      widget.trainCleanlinesData,
+                                ),
+                              ),
+                            );
+                          },
+                          child: helperButton('Next'),
+                        ),
+                      ),
+                  ],
+                ),
+
+              if (widget.pageCount == coachList.length - 1)
+                Row(
+                  children: [
                     Expanded(
                       child: InkWell(
-                        onTap: () {
+                        onTap: () async {
+                          bool isValid = validateCurrentPageInputs();
 
-                          if(validationCheck(selectedScore.toString(),remarkController.text)){
-                            customToast('Pleas first fill both details!!!');
+                          if (!isValid) {
+                            setState(() {});
+                            customToast('Please fill all scores.');
                             return;
                           }
 
-                          final cleanlinesParameter =
-                              currentPageDate[widget.pageCount];
-
-                          widget.trainCleanlinesData.cleanlinesParameter[cleanlinesParameter] =
-                              Cleanlinesmodel(
-                                score:  selectedScore!,
-                                remark: remarkController.text,
-                              );
-
-                           remarkController.clear();
-                          selectedScore = null;
+                          setClealinesDataCoachWise();
 
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Parameterspage(
-                                pageCount: widget.pageCount + 1,
-                                trainCleanlinesData: widget.trainCleanlinesData,
+                              builder: (context) => PreviewPage(
+                                cleanlinesData : widget.trainCleanlinesData,
+                                remarkController: remarkController,
+                                selectedScore: selectedScore,
                               ),
                             ),
                           );
                         },
-                        child: helperButton('Next'),
+                        child: helperButton('Preview'),
                       ),
                     ),
-                ],
-              ),
-            if (widget.pageCount == parametersList.length - 1)
-              InkWell(
-                onTap: () async{
 
-                  await inspectionProvider.addTrainCleanlinesData(widget.trainCleanlinesData);
-                  if(context.mounted) {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => Homepage()),
-                          (Route<dynamic> route) => false,
-                    );
-                  }
-                },
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          bool isValid = validateCurrentPageInputs();
 
-                child: helperButton('Submit'),
-              ),
-          ],
+                          if (!isValid) {
+                            setState(() {});
+                            customToast('Please fill all scores.');
+                            return;
+                          }
+
+                          //Set data to coach wise
+                          setClealinesDataCoachWise();
+
+                          await Provider.of<Inspectionformprovider>(
+                            context,
+                            listen: false,
+                          ).addDataToProvider(context, widget.trainCleanlinesData);
+
+                          if (context.mounted) {
+                            clearAllControllerData();
+
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Homepage(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                          }
+                        },
+                        child: helperButton('Submit'),
+                      ),
+                    ),
+                  ],
+                ),
+              SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  void setClealinesDataCoachWise() {
+    String currentCoach = 'C${widget.pageCount + 1}';
+
+    for (int i = 0; i < parametersList.length; i++) {
+      final param = parametersList[i];
+
+      final paramData = widget
+          .trainCleanlinesData
+          .coachWiseCleanlinesParameter[currentCoach]?[param];
+
+      paramData!.score = selectedScore[i]!;
+      paramData.remark = remarkController[i]?.text ?? '-';
+    }
+  }
+
+  void clearAllControllerData() {
+    for (var controller in remarkController) {
+      controller!.clear();
+    }
+
+    selectedScore = List.generate(4, (index) => null);
+  }
+
 }
