@@ -38,4 +38,23 @@ A professional Flutter application for inspecting and managing railway coach cle
 | dart_pdf     | Dynamic PDF generation                   |
 | printing     | PDF preview and print                    |
 
+## UI 
+## Home Page
+![WhatsApp Image 2025-07-07 at 2 58 09 PM](https://github.com/user-attachments/assets/6789f232-f6f4-4fd8-91d2-b89fcecd7713)
+
+## InspectionForm
+![WhatsApp Image 2025-07-07 at 2 58 09 PM (1)](https://github.com/user-attachments/assets/dab712d6-7398-4e54-adfd-4e9ba9471851)
+
+![WhatsApp Image 2025-07-07 at 2 58 10 PM](https://github.com/user-attachments/assets/77100789-6709-488a-87f2-4a613e7ee5b7)
+
+![WhatsApp Image 2025-07-07 at 2 58 10 PM (1)](https://github.com/user-attachments/assets/c850b2b8-677d-4cba-9904-bed2db16f001)
+
+![WhatsApp Image 2025-07-07 at 2 58 10 PM (2)](https://github.com/user-attachments/assets/189d8309-91e2-423d-944d-e1d253f17e5f)
+
+## Last Page of submission
+![WhatsApp Image 2025-07-07 at 3 02 49 PM](https://github.com/user-attachments/assets/e587a7ba-6266-4b7d-b127-113350048791)
+
+## PDF Preview / Summery
+![WhatsApp Image 2025-07-07 at 2 58 11 PM](https://github.com/user-attachments/assets/b39faea9-1654-404a-ad57-009c526c4d4a)
+
 
