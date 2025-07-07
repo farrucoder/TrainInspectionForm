@@ -172,15 +172,15 @@ class _ParameterspageState extends State<Parameterspage> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            // bool isValid = validateCurrentPageInputs();
-                            //
-                            // if (!isValid) {
-                            //   setState(() {});
-                            //   customToast('Please fill all scores.');
-                            //   return;
-                            // }
-                            //
-                            // setClealinesDataCoachWise();
+                            bool isValid = validateCurrentPageInputs();
+
+                            if (!isValid) {
+                              setState(() {});
+                              customToast('Please fill all scores.');
+                              return;
+                            }
+
+                            setClealinesDataCoachWise();
 
                             Navigator.push(
                               context,

@@ -61,19 +61,3 @@ class Trainmodel {
 
 
 }
-
-// Map<String, dynamic> toMap() {
-//   return {
-//     'stationName': stationName,
-//     'date': date,
-//     'coachWise': coachWiseCleanlinesParameter.map((coach, paramMap) {
-//       return MapEntry(
-//         coach,
-//         paramMap.map((paramName, paramData) => MapEntry(paramName, {
-//           'score': paramData.score,
-//           'remark': paramData.remark,
-//         })),
-//       );
-//     }),
-//   };
-// }
