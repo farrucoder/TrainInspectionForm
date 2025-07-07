@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:trainformforinspection/Models/Train-Model.dart';
 import 'package:trainformforinspection/Pages/Home-Page.dart';
 import 'package:trainformforinspection/Providers/Inspection-Form-Provider.dart';
 import 'package:trainformforinspection/ReusableWidgets/helperButton.dart';
 import 'package:trainformforinspection/ReusableWidgets/helperInputField.dart';
-import '../Pages/Preview-Page.dart';
+import 'package:trainformforinspection/Services/Bin-APIs-Services.dart';
+import 'package:trainformforinspection/Utils/pdf-Generator.dart';
+import '../Utils/Parameter-Constant-List.dart';
 import 'custom-Toast.dart';
 
 class Parameterspage extends StatefulWidget {
@@ -23,6 +26,8 @@ class Parameterspage extends StatefulWidget {
 }
 
 class _ParameterspageState extends State<Parameterspage> {
+  bool isLoading = false;
+
   final List<TextEditingController?> remarkController = [
     TextEditingController(),
     TextEditingController(),
@@ -34,19 +39,12 @@ class _ParameterspageState extends State<Parameterspage> {
 
   List<int?> selectedScore = List.generate(4, (index) => null);
 
-  final List<String> parametersList = [
-    'Urine Check?',
-    'Dustbin Check?',
-    'Drinking Check?',
-    'Mirror Check?',
-  ];
-
   final List<String> coachList = List.generate(12, (index) => 'C${index + 1}');
 
   List<bool> scoreNotSelected = List.generate(4, (index) => false);
 
   bool validateCurrentPageInputs() {
-    for (int i = 0; i < parametersList.length; i++) {
+    for (int i = 0; i < ParameterConstantList.parametersList.length; i++) {
       if (selectedScore[i] == null) {
         scoreNotSelected[i] = true;
         return false;
@@ -78,7 +76,7 @@ class _ParameterspageState extends State<Parameterspage> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: parametersList.length,
+                  itemCount: ParameterConstantList.parametersList.length,
                   itemBuilder: (context, i) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -88,7 +86,7 @@ class _ParameterspageState extends State<Parameterspage> {
                           children: [
                             Center(
                               child: Text(
-                                parametersList[i],
+                                ParameterConstantList.parametersList[i],
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -207,6 +205,7 @@ class _ParameterspageState extends State<Parameterspage> {
                     Expanded(
                       child: InkWell(
                         onTap: () async {
+
                           bool isValid = validateCurrentPageInputs();
 
                           if (!isValid) {
@@ -217,16 +216,10 @@ class _ParameterspageState extends State<Parameterspage> {
 
                           setClealinesDataCoachWise();
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PreviewPage(
-                                cleanlinesData : widget.trainCleanlinesData,
-                                remarkController: remarkController,
-                                selectedScore: selectedScore,
-                              ),
-                            ),
-                          );
+                          final pdfData = await PdfGenerator.generatePdf(widget.trainCleanlinesData);
+
+                          await Printing.layoutPdf(onLayout: (format) => pdfData);
+
                         },
                         child: helperButton('Preview'),
                       ),
@@ -247,13 +240,30 @@ class _ParameterspageState extends State<Parameterspage> {
                           //Set data to coach wise
                           setClealinesDataCoachWise();
 
-                          await Provider.of<Inspectionformprovider>(
-                            context,
-                            listen: false,
-                          ).addDataToProvider(context, widget.trainCleanlinesData);
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          //WebHook - send data to api
+                          final data = await BinAPIsService.sendDataToBin(
+                            widget.trainCleanlinesData,
+                          );
+
+                          if (context.mounted) {
+                            await Provider.of<Inspectionformprovider>(
+                              context,
+                              listen: false,
+                            ).addDataToProvider(context, data!);
+                          }
+
+                          setState(() {
+                            isLoading = false;
+                          });
 
                           if (context.mounted) {
                             clearAllControllerData();
+
+                            customToast('Form has been submitted');
 
                             Navigator.pushAndRemoveUntil(
                               context,
@@ -264,7 +274,23 @@ class _ParameterspageState extends State<Parameterspage> {
                             );
                           }
                         },
-                        child: helperButton('Submit'),
+                        child: isLoading
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                                child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[500],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              )
+                            : helperButton('Submit'),
                       ),
                     ),
                   ],
@@ -280,8 +306,8 @@ class _ParameterspageState extends State<Parameterspage> {
   void setClealinesDataCoachWise() {
     String currentCoach = 'C${widget.pageCount + 1}';
 
-    for (int i = 0; i < parametersList.length; i++) {
-      final param = parametersList[i];
+    for (int i = 0; i < ParameterConstantList.parametersList.length; i++) {
+      final param = ParameterConstantList.parametersList[i];
 
       final paramData = widget
           .trainCleanlinesData
@@ -299,5 +325,4 @@ class _ParameterspageState extends State<Parameterspage> {
 
     selectedScore = List.generate(4, (index) => null);
   }
-
 }

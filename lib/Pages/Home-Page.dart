@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:trainformforinspection/Pages/Inspection-Form-Page.dart';
 import 'package:trainformforinspection/Providers/Inspection-Form-Provider.dart';
 
+import '../Utils/Parameter-Constant-List.dart';
+
 class Homepage extends StatefulWidget {
    Homepage({super.key});
 
@@ -11,12 +13,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  final List<String> parametersList = [
-    'Urine Check?',
-    'Dustbin Check?',
-    'Drinking Check?',
-    'Mirror Check?',
-  ];
 
   @override
   void initState() {
@@ -122,7 +118,7 @@ class _HomepageState extends State<Homepage> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold)),
                             SizedBox(height: 8),
-                            for (final param in parametersList)
+                            for (final param in ParameterConstantList.parametersList)
                               Padding(
                                 padding:
                                 const EdgeInsets.symmetric(vertical: 12),
@@ -154,7 +150,7 @@ class _HomepageState extends State<Homepage> {
                                       ),
                                     ),
                                     SizedBox(height: 8),
-                                    for (final param in parametersList)
+                                    for (final param in ParameterConstantList.parametersList)
                                       Padding(
                                         padding:
                                         const EdgeInsets.symmetric(

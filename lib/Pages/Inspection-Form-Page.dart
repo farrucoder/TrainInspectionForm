@@ -6,6 +6,7 @@ import 'package:trainformforinspection/ReusableWidgets/helperInputField.dart';
 import 'package:trainformforinspection/Utils/datePicker.dart';
 import '../Models/Cleanlines-Model.dart';
 import '../ReusableWidgets/custom-Toast.dart';
+import '../Utils/Parameter-Constant-List.dart';
 import '../Utils/validationCheck.dart';
 
 class Inspectionformpage extends StatefulWidget {
@@ -91,18 +92,12 @@ class _InspectionformpageState extends State<Inspectionformpage> {
 
                 final Map<String, Map<String, Cleanlinesmodel>> coachData = {};
 
-                final List<String> parametersList = [
-                  'Urine Check?',
-                  'Dustbin Check?',
-                  'Drinking Check?',
-                  'Mirror Check?',
-                ];
 
                 for (int i = 1; i <= 12; i++) {
                   String coachId = 'C$i';
                   coachData[coachId] = {};
 
-                  for (var param in parametersList) {
+                  for (var param in ParameterConstantList.parametersList) {
                     coachData[coachId]![param] = Cleanlinesmodel(score: 0, remark: '');
                   }
                 }
