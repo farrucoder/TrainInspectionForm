@@ -28,12 +28,13 @@ A professional Flutter application for inspecting and managing railway coach cle
 
 ## 🛠 Tech Stack
 
-| Tech         | Usage                                   |
+| Tech         | Usage                                    |
 |--------------|------------------------------------------|
 | Flutter      | Frontend mobile & web app                |
 | Hive         | Local NoSQL database (offline storage)   |
 | Provider     | State management                         |
-| http         | API communication                        |
+| http         | API communication  
+| connectivity_plus | To check internet connectivity      |
 | dart_pdf     | Dynamic PDF generation                   |
 | printing     | PDF preview and print                    |
 
