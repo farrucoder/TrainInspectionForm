@@ -10,10 +10,10 @@ A professional Flutter application for inspecting and managing railway coach cle
   Save inspection form data locally without internet — perfect for offline usage.
 
 - 📤 **HTTPBin & Webhook API Integration**  
-  Send your inspection data as JSON payloads to mock servers (`httpbin.org`, `webhook.site`) for testing or integration.
+  Send your inspection data as JSON payloads to mock servers (`httpbin.org`) for testing or integration.
 
 - 🧾 **PDF Summary Generation**  
-  View and download a **clean, well-structured PDF** summary of all cleanliness parameters (score & remark) per coach.
+  View and download/save a **clean, well-structured PDF** summary of all cleanliness parameters (score & remark) per coach.
 
 - 📶 **Offline First Functionality**  
   Automatically stores data locally in case of accidental app close or no internet.
@@ -37,7 +37,4 @@ A professional Flutter application for inspecting and managing railway coach cle
 | dart_pdf     | Dynamic PDF generation                   |
 | printing     | PDF preview and print                    |
 
----
-
-## 📦 Folder Structure
 
