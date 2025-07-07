@@ -9,6 +9,7 @@ import 'package:trainformforinspection/ReusableWidgets/helperInputField.dart';
 import 'package:trainformforinspection/Services/Bin-APIs-Services.dart';
 import 'package:trainformforinspection/Utils/pdf-Generator.dart';
 import '../Utils/Parameter-Constant-List.dart';
+import '../Utils/check-Internet-Conecction.dart';
 import 'custom-Toast.dart';
 
 class Parameterspage extends StatefulWidget {
@@ -244,17 +245,30 @@ class _ParameterspageState extends State<Parameterspage> {
                             isLoading = true;
                           });
 
-                          //WebHook - send data to api
-                          final data = await BinAPIsService.sendDataToBin(
-                            widget.trainCleanlinesData,
-                          );
+                          if (await hasInternet()) {
 
-                          if (context.mounted) {
-                            await Provider.of<Inspectionformprovider>(
-                              context,
-                              listen: false,
-                            ).addDataToProvider(context, data!);
+                            final data = await BinAPIsService.sendDataToBin(
+                              widget.trainCleanlinesData,
+                            );
+
+                            if (context.mounted) {
+                              await Provider.of<Inspectionformprovider>(
+                                context,
+                                listen: false,
+                              ).addDataToProvider(context, data!);
+                            }
+
+                          } else {
+
+                            if (context.mounted) {
+                              await Provider.of<Inspectionformprovider>(
+                                context,
+                                listen: false,
+                              ).addDataToProvider(context, widget.trainCleanlinesData);
+                            }
+
                           }
+
 
                           setState(() {
                             isLoading = false;
